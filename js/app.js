@@ -1,21 +1,63 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const otherTitleLabel = document.querySelector("#other-title-label");
+    const otherTitleInput = document.querySelector("#other-title");
+    const themeSelect = document.querySelector("#design");
+    const colorsDiv = document.querySelector("#colors-js-puns");
 
-document.querySelector("#other-title-label").style.display = "none";
-document.querySelector("#other-title").style.display = "none";
+    const colorOption = {
+        'js puns' : [
+            document.querySelector('option[value="cornflowerblue"]'),
+            document.querySelector('option[value="darkslategrey"]'),
+            document.querySelector('option[value="gold"]')
+        ],
+        'heart js' : [
+            document.querySelector('option[value="tomato"]'),
+            document.querySelector('option[value="steelblue"]'),
+            document.querySelector('option[value="dimgrey"]')
+        ]
+    };
 
-const userTitle = document.querySelector("#title");
+    otherTitleLabel.style.display = "none";
+    otherTitleInput.style.display = "none";
+    colorsDiv.style.display = "none";
 
-userTitle.addEventListener("change", (e) => {
-    const titleSelected = e.target.value;
+    const userTitle = document.querySelector("#title");
 
-    if (titleSelected === "other") {
-        document.querySelector("#other-title-label").style.display = "";
-        document.querySelector("#other-title").style.display = ""; 
-    }
-    else {
-        document.querySelector("#other-title-label").style.display = "none";
-        document.querySelector("#other-title").style.display = "none"; 
-    }
-});
+    userTitle.addEventListener("change", (e) => {
+        const titleSelected = e.target.value;
+
+        if (titleSelected === "other") {
+            otherTitleLabel.style.display = "";
+            otherTitleInput.style.display = ""; 
+        }
+        else {
+            otherTitleLabel.style.display = "none";
+            otherTitleInput.style.display = "none"; 
+        }
+    });
+
+    themeSelect.addEventListener("change", (e) => {
+        const themeSelected = e.target.value;
+        const designSelect = document.querySelector("#color");
+        const selectOption = document.querySelectorAll("#color option");
+
+        selectOption.forEach(function(element) {
+            designSelect.removeChild(element);
+        });
+
+        if (themeSelected === "js puns") {
+            colorsDiv.style.display = "";
+            colorOption[themeSelected].forEach(function(element) {
+                designSelect.appendChild(element);
+            });
+        } else if (themeSelected === "heart js") {
+            colorsDiv.style.display = "";
+            colorOption[themeSelected].forEach(function(element) {
+                designSelect.appendChild(element);
+            });
+        } else  {
+            colorsDiv.style.display = "none";
+        }
+    });
 
 });
