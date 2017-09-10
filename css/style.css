@@ -179,3 +179,11 @@ button:hover {
 		width: 49%;
 	}
 }
+
+label.disabled-true {
+	color: gray;
+}
+
+label.disabled-false {
+	color: initial;
+}
