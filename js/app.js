@@ -1,21 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const userTitle = document.querySelector("#title");
     const otherTitleLabel = document.querySelector("#other-title-label");
     const otherTitleInput = document.querySelector("#other-title");
     const themeSelect = document.querySelector("#design");
     const colorsDiv = document.querySelector("#colors-js-puns");
     const activityChk = document.querySelectorAll('[type="checkbox"]');
+    const paymentSelect = document.querySelector("#payment");
+    const creditDiv = document.querySelector("#credit-card");
+    const bitcoinDiv = document.querySelector("#bitcoin");
+    const paypalDiv = document.querySelector("#paypal");
     let confTotal = 0;
-
-    // <label>Your Total is $ <span>0</span></label>
-    const totalDiv = document.createElement("label");
-    totalDiv.id = "totalDiv";
-    totalDiv.textContent = "Your Total is $ ";
-    const totalSpan = document.createElement("span");
-    totalSpan.id = "totalSpan";
-    totalSpan.textContent= confTotal;
-    totalDiv.appendChild(totalSpan);
-    document.querySelector(".activities").appendChild(totalDiv);
-
     const colorOption = {
         'js puns' : [
             document.querySelector('option[value="cornflowerblue"]'),
@@ -29,12 +23,27 @@ document.addEventListener("DOMContentLoaded", () => {
         ]
     };
 
+    // <label>Your Total is $ <span>0</span></label>
+    const totalDiv = document.createElement("label");
+    totalDiv.id = "totalDiv";
+    totalDiv.textContent = "Your Total is $ ";
+    const totalSpan = document.createElement("span");
+    totalSpan.id = "totalSpan";
+    totalSpan.textContent= confTotal;
+    totalDiv.appendChild(totalSpan);
+    document.querySelector(".activities").appendChild(totalDiv);
+
     otherTitleLabel.style.display = "none";
     otherTitleInput.style.display = "none";
     colorsDiv.style.display = "none";
 
-    const userTitle = document.querySelector("#title");
+    paymentSelect.selectedIndex = 1;
+    bitcoinDiv.style.display = "none";
+    paypalDiv.style.display = "none";
 
+    // 
+    // Job event listner
+    // 
     userTitle.addEventListener("change", (e) => {
         const titleSelected = e.target.value;
 
@@ -48,6 +57,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // 
+    // Theme event listner
+    // 
     themeSelect.addEventListener("change", (e) => {
         const themeSelected = e.target.value;
         const designSelect = document.querySelector("#color");
@@ -72,16 +84,21 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // 
+    // Activity event listner
+    // 
     activityChk.forEach(function(element) {
         element.addEventListener("change", (e) => {
-            const price = e.target.getAttribute("data-price");
+            const price = parseInt(e.target.getAttribute("data-price"));
             const activityName = e.target.getAttribute("name");
             const isChecked = e.target.checked;
 
             if (isChecked) {
-                totalSpan.textContent = confTotal + price;
+                confTotal = confTotal  + price;
+                totalSpan.textContent = confTotal;
             } else {
-                totalSpan.textContent = confTotal - price;
+                confTotal = confTotal - price;
+                totalSpan.textContent = confTotal;
             }
 
             switch (activityName) {
@@ -108,4 +125,35 @@ document.addEventListener("DOMContentLoaded", () => {
         });  
     });
 
+    // 
+    // Payment event listner
+    // 
+    paymentSelect.addEventListener("change", (e) => {
+        const paymentMethod = e.target.value;
+        console.log(paymentMethod);
+
+        bitcoinDiv.style.display = "";
+        creditDiv.style.display = "";
+        paypalDiv.style.display = "";
+
+        switch (paymentMethod) {
+            case "bitcoin":  
+                creditDiv.style.display = "none";
+                paypalDiv.style.display = "none";
+                break;
+            case "credit card":
+                bitcoinDiv.style.display = "none";
+                paypalDiv.style.display = "none";
+                break;    
+            case "paypal":
+                bitcoinDiv.style.display = "none";
+                creditDiv.style.display = "none";
+                break;
+            default:
+                bitcoinDiv.style.display = "none";
+                creditDiv.style.display = "none";
+                paypalDiv.style.display = "none";
+                break;
+        }
+    });
 });
