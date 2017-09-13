@@ -1,4 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const form = document.querySelector("form");
+
+    const nameField = document.querySelector("#name");
+    const emailField = document.querySelector("#mail");
+    const ccField = document.querySelector("#cc-num");
+    const zipField = document.querySelector("#zip");
+    const cvvField = document.querySelector("#cvv");
+
     const userTitle = document.querySelector("#title");
     const otherTitleLabel = document.querySelector("#other-title-label");
     const otherTitleInput = document.querySelector("#other-title");
@@ -9,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const creditDiv = document.querySelector("#credit-card");
     const bitcoinDiv = document.querySelector("#bitcoin");
     const paypalDiv = document.querySelector("#paypal");
+    const submitBtn = document.querySelector("button");
     let confTotal = 0;
     const colorOption = {
         'js puns' : [
@@ -40,6 +49,8 @@ document.addEventListener("DOMContentLoaded", () => {
     paymentSelect.selectedIndex = 1;
     bitcoinDiv.style.display = "none";
     paypalDiv.style.display = "none";
+
+    // submitBtn.disabled = true;
 
     // 
     // Job event listner
@@ -156,4 +167,162 @@ document.addEventListener("DOMContentLoaded", () => {
                 break;
         }
     });
+
+    //
+    // email event listner
+    //
+    emailField.addEventListener("keyup", (e) => {
+        const val = e.target.value;
+        
+        const emaiPassed = isEmailValid(val);
+        if(emaiPassed.error) {
+            e.target.className = "error";
+        } else {
+            e.target.className = "pass";
+        }
+    })
+
+    //
+    // form submit event listner
+    //
+    form.addEventListener("submit", (e) => {
+        removeError();
+        
+        const namePassed = isFieldEmpty(nameField);
+        if (namePassed.error) {
+            console.log(namePassed.error);
+            appendError(document.querySelector('[for="name"]'), namePassed.error);
+            nameField.className = "error";
+        } else {
+            nameField.className = "";
+        }
+
+        const emailPassed = isEmailValid(emailField.value);
+        if (emailPassed.error) {
+            console.log(emailPassed.error);
+            appendError(document.querySelector('[for="mail"]'), emailPassed.error);
+            emailField.className = "error";
+        } else {
+            emailField.className = "";
+        }
+
+        const activityPassed = isActivitySelected();
+        if (activityPassed.error) {
+            console.log(activityPassed.error);
+            appendError(document.querySelector(".activities").firstElementChild, activityPassed.error);
+        }
+
+        // if (paymentSelect.selectedIndex == 1)
+        // {
+            const ccPassed = isCcValid(ccField.value,/^\d{13,16}$/,13,16);
+            if (ccPassed.error) {
+                console.log(ccPassed.error);
+                appendError(document.querySelector('[for="cc-num"]'), ccPassed.error);
+                ccField.className = "error";
+            }
+            else{
+                ccField.className = "";
+            }
+            
+            const zipPassed = isCcValid(zipField.value,/^\d{5}$/,5,5);
+            if (zipPassed.error) {
+                console.log(zipPassed.error);
+                appendError(document.querySelector('[for="zip"]'), zipPassed.error);
+                zipField.className = "error";
+            }
+            else{
+                zipField.className = "";
+            }
+            
+            const cvvPassed  = isCcValid(cvvField.value,/^\d{3}$/,3,3); 
+            if (cvvPassed.error) {
+                console.log(cvvPassed.error);
+                appendError(document.querySelector('[for="cvv"]'), cvvPassed.error);
+                cvvField.className = "error";
+            }
+            else{
+                cvvField.className = "";
+            }
+        // }
+
+        if (namePassed.error || emailPassed.error || activityPassed.error) {
+            if(paymentSelect.selectedIndex == 1)
+            {
+                if (ccPassed.error || zipPassed.error || cvvPassed.error)
+                {
+                    event.preventDefault();
+                }
+            }
+            else {
+                event.preventDefault();
+            }
+        }
+    });
+
+
+    //
+    // Helper functions
+    //
+
+    const appendError = (label, error) => {
+        const span = document.createElement("span");
+        span.className = "error-text";
+        span.textContent = " " + error;
+        label.appendChild(span);
+    }
+
+    const removeError = () => {
+        const errorSpan = document.querySelectorAll(".error-text");
+
+        errorSpan.forEach(function(element) {
+            element.remove();
+        });
+    }
+
+    const isFieldEmpty = (field) => {
+        const val = field.value;
+        if (val == 0) {
+            return {pass: false, error: "Field is empty"};
+        } else {
+            return true;
+        }
+    } 
+
+    const isEmailValid = (value) => {
+        const emailPattern = /\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+
+        if (value == 0) {
+            return {pass: false, error: "Field is empty"};
+        } else {
+            if (emailPattern.test(value) == false) {
+                return {pass: false, error: "Email is not valid"};
+            }
+            else {
+                return true;
+            }
+        }
+    }
+
+    const isActivitySelected = () => {
+
+        const activitySelected = document.querySelector("input:checked");
+        if(document.querySelector("input:checked")) {
+            return true;
+        } else {
+            return {pass: false, error: "Activity not selected"};
+        }
+    }
+
+    const isCcValid = (value,pattern, minLength, maxLength) => {
+        if (value == 0) {
+            return {pass: false, error: "Field is empty"};
+        } else if (value.length < minLength || value.length > maxLength){
+            return {pass: false, error: "field has to be between " + minLength + " and " + maxLength + " digits"};
+        } else if (pattern.test(value) == false){
+            return {pass: false, error: "field does not match format"};
+        }
+        else {
+            return true;
+        }
+    }
 });
