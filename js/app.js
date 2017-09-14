@@ -246,14 +246,12 @@ document.addEventListener("DOMContentLoaded", () => {
         // }
 
         if (namePassed.error || emailPassed.error || activityPassed.error) {
-            if(paymentSelect.selectedIndex == 1)
+            event.preventDefault();
+        }
+        if(paymentSelect.selectedIndex == 1)
+        {
+            if (ccPassed.error || zipPassed.error || cvvPassed.error)
             {
-                if (ccPassed.error || zipPassed.error || cvvPassed.error)
-                {
-                    event.preventDefault();
-                }
-            }
-            else {
                 event.preventDefault();
             }
         }
