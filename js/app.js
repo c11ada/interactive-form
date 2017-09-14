@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const form = document.querySelector("form");
 
     const nameField = document.querySelector("#name");
     const emailField = document.querySelector("#mail");
@@ -10,14 +9,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const userTitle = document.querySelector("#title");
     const otherTitleLabel = document.querySelector("#other-title-label");
     const otherTitleInput = document.querySelector("#other-title");
+
     const themeSelect = document.querySelector("#design");
     const colorsDiv = document.querySelector("#colors-js-puns");
+
     const activityChk = document.querySelectorAll('[type="checkbox"]');
     const paymentSelect = document.querySelector("#payment");
     const creditDiv = document.querySelector("#credit-card");
     const bitcoinDiv = document.querySelector("#bitcoin");
     const paypalDiv = document.querySelector("#paypal");
+
+    const form = document.querySelector("form");
     const submitBtn = document.querySelector("button");
+
     let confTotal = 0;
     const colorOption = {
         'js puns' : [
@@ -32,6 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ]
     };
 
+    // create label to display total cost of activities
     // <label>Your Total is $ <span>0</span></label>
     const totalDiv = document.createElement("label");
     totalDiv.id = "totalDiv";
@@ -42,15 +47,18 @@ document.addEventListener("DOMContentLoaded", () => {
     totalDiv.appendChild(totalSpan);
     document.querySelector(".activities").appendChild(totalDiv);
 
+    // hide other title input and label
     otherTitleLabel.style.display = "none";
     otherTitleInput.style.display = "none";
+
+    // hide color selector div
     colorsDiv.style.display = "none";
 
+    // set payment type to 1 - credit card
+    // hide bit and paypal sections
     paymentSelect.selectedIndex = 1;
     bitcoinDiv.style.display = "none";
     paypalDiv.style.display = "none";
-
-    // submitBtn.disabled = true;
 
     // 
     // Job event listner
@@ -76,12 +84,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const designSelect = document.querySelector("#color");
         const selectOption = document.querySelectorAll("#color option");
 
+        // remove the curent list of options
         selectOption.forEach(function(element) {
             designSelect.removeChild(element);
         });
 
+        // display new list of options depending on theme selected
         if (themeSelected === "js puns") {
+            // remove dispplay none style
             colorsDiv.style.display = "";
+            // foreach colorOption[js puns] -> append to option list
             colorOption[themeSelected].forEach(function(element) {
                 designSelect.appendChild(element);
             });
@@ -98,12 +110,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // 
     // Activity event listner
     // 
+    // loop through each checkbox to add event listner
     activityChk.forEach(function(element) {
         element.addEventListener("change", (e) => {
+            // get price element
             const price = parseInt(e.target.getAttribute("data-price"));
             const activityName = e.target.getAttribute("name");
             const isChecked = e.target.checked;
 
+            // if ctivity is checked add price to total
+            // else remove
             if (isChecked) {
                 confTotal = confTotal  + price;
                 totalSpan.textContent = confTotal;
@@ -114,20 +130,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
             switch (activityName) {
                 case "js-frameworks":  
-                    document.querySelector('[name="express"]').disabled = isChecked;
-                    document.querySelector('[name="express"]').parentNode.className = "disabled-" + isChecked;
+                    modifyActivityState("express",isChecked);
                     break;
                 case "js-libs":
-                    document.querySelector('[name="node"]').disabled = isChecked;
-                    document.querySelector('[name="node"]').parentNode.className = "disabled-" + isChecked;
+                    modifyActivityState("node",isChecked);
                     break;    
                 case "node":
-                    document.querySelector('[name="js-libs"]').disabled = isChecked;
-                    document.querySelector('[name="js-libs"]').parentNode.className = "disabled-" + isChecked;
+                    modifyActivityState("js-libs",isChecked);
                     break;
                 case "express":
-                    document.querySelector('[name="js-frameworks"]').disabled = isChecked;
-                    document.querySelector('[name="js-frameworks"]').parentNode.className = "disabled-" + isChecked;
+                    modifyActivityState("js-frameworks",isChecked);
                     break;
                 default:
                     console.log("something else pressed pressed");
@@ -143,10 +155,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const paymentMethod = e.target.value;
         console.log(paymentMethod);
 
+        // hide all three sections
         bitcoinDiv.style.display = "";
         creditDiv.style.display = "";
         paypalDiv.style.display = "";
 
+        // dislay relevnant dection switch on payment method
         switch (paymentMethod) {
             case "bitcoin":  
                 creditDiv.style.display = "none";
@@ -171,9 +185,10 @@ document.addEventListener("DOMContentLoaded", () => {
     //
     // email event listner
     //
+    // real time validation on email field as user types
     emailField.addEventListener("keyup", (e) => {
         const val = e.target.value;
-        
+        // check to see if email is valid
         const emaiPassed = isEmailValid(val);
         if(emaiPassed.error) {
             e.target.className = "error";
@@ -186,8 +201,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // form submit event listner
     //
     form.addEventListener("submit", (e) => {
+        // remove any previous errors
         removeError();
         
+        // check name is not empty
         const namePassed = isFieldEmpty(nameField);
         if (namePassed.error) {
             console.log(namePassed.error);
@@ -197,6 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
             nameField.className = "";
         }
 
+        // check emaail is valid
         const emailPassed = isEmailValid(emailField.value);
         if (emailPassed.error) {
             console.log(emailPassed.error);
@@ -206,50 +224,54 @@ document.addEventListener("DOMContentLoaded", () => {
             emailField.className = "";
         }
 
+        // check to see if atleast one activity is selected
         const activityPassed = isActivitySelected();
         if (activityPassed.error) {
             console.log(activityPassed.error);
             appendError(document.querySelector(".activities").firstElementChild, activityPassed.error);
         }
 
-        // if (paymentSelect.selectedIndex == 1)
-        // {
-            const ccPassed = isCcValid(ccField.value,/^\d{13,16}$/,13,16);
-            if (ccPassed.error) {
-                console.log(ccPassed.error);
-                appendError(document.querySelector('[for="cc-num"]'), ccPassed.error);
-                ccField.className = "error";
-            }
-            else{
-                ccField.className = "";
-            }
-            
-            const zipPassed = isCcValid(zipField.value,/^\d{5}$/,5,5);
-            if (zipPassed.error) {
-                console.log(zipPassed.error);
-                appendError(document.querySelector('[for="zip"]'), zipPassed.error);
-                zipField.className = "error";
-            }
-            else{
-                zipField.className = "";
-            }
-            
-            const cvvPassed  = isCcValid(cvvField.value,/^\d{3}$/,3,3); 
-            if (cvvPassed.error) {
-                console.log(cvvPassed.error);
-                appendError(document.querySelector('[for="cvv"]'), cvvPassed.error);
-                cvvField.className = "error";
-            }
-            else{
-                cvvField.className = "";
-            }
-        // }
+        // check to see is CC number is valid
+        const ccPassed = isCcValid(ccField.value,/^\d{13,16}$/,13,16);
+        if (ccPassed.error) {
+            console.log(ccPassed.error);
+            appendError(document.querySelector('[for="cc-num"]'), ccPassed.error);
+            ccField.className = "error";
+        }
+        else{
+            ccField.className = "";
+        }
+        
+        // check to see if zip is valid
+        const zipPassed = isCcValid(zipField.value,/^\d{5}$/,5,5);
+        if (zipPassed.error) {
+            console.log(zipPassed.error);
+            appendError(document.querySelector('[for="zip"]'), zipPassed.error);
+            zipField.className = "error";
+        }
+        else{
+            zipField.className = "";
+        }
+        
+        // check to see if cvv is valid
+        const cvvPassed  = isCcValid(cvvField.value,/^\d{3}$/,3,3); 
+        if (cvvPassed.error) {
+            console.log(cvvPassed.error);
+            appendError(document.querySelector('[for="cvv"]'), cvvPassed.error);
+            cvvField.className = "error";
+        }
+        else{
+            cvvField.className = "";
+        }
 
+        // if any of the fields have an error then form will not refresh
         if (namePassed.error || emailPassed.error || activityPassed.error) {
             event.preventDefault();
         }
+        // if payment is credit card
         if(paymentSelect.selectedIndex == 1)
         {
+            // any of the credit card fields have an error form will not refresh
             if (ccPassed.error || zipPassed.error || cvvPassed.error)
             {
                 event.preventDefault();
@@ -262,6 +284,22 @@ document.addEventListener("DOMContentLoaded", () => {
     // Helper functions
     //
 
+    // 
+    // modify the state of one of the activities
+    // 
+    // activity: string
+    // state: boolean
+    const modifyActivityState = (activity,state) => {
+        const querySelector = '[name="' +activity+ '"]';
+        document.querySelector(querySelector).disabled = state;
+        document.querySelector(querySelector).parentNode.className = "disabled-" + state;
+    }
+
+    // 
+    // Append error message span to a label element
+    // 
+    // label: element
+    // error: string
     const appendError = (label, error) => {
         const span = document.createElement("span");
         span.className = "error-text";
@@ -269,6 +307,9 @@ document.addEventListener("DOMContentLoaded", () => {
         label.appendChild(span);
     }
 
+    // 
+    // remove errors
+    // 
     const removeError = () => {
         const errorSpan = document.querySelectorAll(".error-text");
 
@@ -277,6 +318,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // 
+    // check to see if a field is empty
+    // if field is empty will send object with an error message 
+    // 
+    // field: element
     const isFieldEmpty = (field) => {
         const val = field.value;
         if (val == 0) {
@@ -286,12 +332,18 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     } 
 
+    // 
+    // check to see if email is valid using a regex pattern
+    // 
+    // value: string
     const isEmailValid = (value) => {
         const emailPattern = /\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
 
+        // if field is empty return error
         if (value == 0) {
             return {pass: false, error: "Field is empty"};
         } else {
+            // if value doesnt match pattern return error
             if (emailPattern.test(value) == false) {
                 return {pass: false, error: "Email is not valid"};
             }
@@ -301,6 +353,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // 
+    // check to see if activity is selected
+    // 
     const isActivitySelected = () => {
 
         const activitySelected = document.querySelector("input:checked");
@@ -311,6 +366,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // 
+    // generic function to check cc fields
+    // 
+    // value: string
+    // pattern: regex pattern
+    // minLength: int
+    // maxLength: int
     const isCcValid = (value,pattern, minLength, maxLength) => {
         if (value == 0) {
             return {pass: false, error: "Field is empty"};
