@@ -377,9 +377,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (value == 0) {
             return {pass: false, error: "Field is empty"};
         } else if (value.length < minLength || value.length > maxLength){
-            return {pass: false, error: "field has to be between " + minLength + " and " + maxLength + " digits"};
+            return {pass: false, error: "Field has to be between " + minLength + " and " + maxLength + " digits"};
         } else if (pattern.test(value) == false){
-            return {pass: false, error: "field does not match format"};
+            return {pass: false, error: "Field does not match format"};
         }
         else {
             return true;

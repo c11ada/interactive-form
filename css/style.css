@@ -202,8 +202,6 @@ input.pass {
 
 .error-text {
 	color: tomato;
-	font-weight: bold;
-	font-size: 0.6em;
-	text-transform: uppercase;
+	font-size: 0.8em;
 	display: block;
 }
