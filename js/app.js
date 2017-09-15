@@ -231,6 +231,10 @@ document.addEventListener("DOMContentLoaded", () => {
             appendError(document.querySelector(".activities").firstElementChild, activityPassed.error);
         }
 
+        if (paymentSelect.selectedIndex == 0) {
+            appendError(document.querySelector('[for="payment"]'), "Select Payment Method");
+        }
+
         // check to see is CC number is valid
         const ccPassed = isCcValid(ccField.value,/^\d{13,16}$/,13,16);
         if (ccPassed.error) {
@@ -337,7 +341,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 
     // value: string
     const isEmailValid = (value) => {
-        const emailPattern = /\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+        const emailPattern = /\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}(\.[a-zA-Z]{2,3})?/;
 
         // if field is empty return error
         if (value == 0) {
