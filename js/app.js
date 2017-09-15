@@ -341,7 +341,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 
     // value: string
     const isEmailValid = (value) => {
-        const emailPattern = /\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}(\.[a-zA-Z]{2,3})?/;
+        const emailPattern = /\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
 
         // if field is empty return error
         if (value == 0) {
